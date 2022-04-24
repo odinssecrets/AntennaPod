@@ -47,6 +47,10 @@ public class Feed extends FeedFile {
     private String author;
     private String imageUrl;
     private List<FeedItem> items;
+    /**
+     * Id of the most recent item from this feed that has been played
+     */
+    private long lastPlayedId;
 
     /**
      * String that identifies the last update (adopted from Last-Modified or ETag header).
@@ -106,7 +110,8 @@ public class Feed extends FeedFile {
                 String description, String paymentLinks, String author, String language,
                 String type, String feedIdentifier, String imageUrl, String fileUrl,
                 String downloadUrl, boolean downloaded, boolean paged, String nextPageLink,
-                String filter, @Nullable SortOrder sortOrder, boolean lastUpdateFailed) {
+                String filter, @Nullable SortOrder sortOrder, boolean lastUpdateFailed,
+                long lastPlayedId) {
         super(fileUrl, downloadUrl, downloaded);
         this.id = id;
         this.feedTitle = title;
@@ -130,6 +135,7 @@ public class Feed extends FeedFile {
         }
         setSortOrder(sortOrder);
         this.lastUpdateFailed = lastUpdateFailed;
+        this.lastPlayedId = lastPlayedId;
     }
 
     /**
@@ -137,9 +143,9 @@ public class Feed extends FeedFile {
      */
     public Feed(long id, String lastUpdate, String title, String link, String description, String paymentLink,
                 String author, String language, String type, String feedIdentifier, String imageUrl, String fileUrl,
-                String downloadUrl, boolean downloaded) {
+                String downloadUrl, boolean downloaded, long lastPlayedId) {
         this(id, lastUpdate, title, null, link, description, paymentLink, author, language, type, feedIdentifier, imageUrl,
-                fileUrl, downloadUrl, downloaded, false, null, null, null, false);
+                fileUrl, downloadUrl, downloaded, false, null, null, null, false, -1);
     }
 
     /**
@@ -372,6 +378,14 @@ public class Feed extends FeedFile {
 
     public void setItems(List<FeedItem> list) {
         this.items = list;
+    }
+
+    public long getLastPlayedId() {
+        return lastPlayedId;
+    }
+
+    public void setLastPlayedId(long lastPlayedId) {
+        this.lastPlayedId = lastPlayedId;
     }
 
     public String getLastUpdate() {

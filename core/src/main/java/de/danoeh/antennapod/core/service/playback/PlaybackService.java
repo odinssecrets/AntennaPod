@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.core.service.playback;
 
+import static de.danoeh.antennapod.model.feed.FeedMedia.PLAYABLE_TYPE_FEEDMEDIA;
 import static de.danoeh.antennapod.model.feed.FeedPreferences.SPEED_USE_GLOBAL;
 
 import android.app.NotificationManager;
@@ -874,6 +875,12 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                 skipIntro(playable);
             }
             playable.onPlaybackStart();
+            if (playable.getPlayableType() == PLAYABLE_TYPE_FEEDMEDIA) {
+                FeedMedia feedMedia = (FeedMedia) playable;
+                Feed feed = feedMedia.getItem().getFeed();
+                feed.setLastPlayedId(feedMedia.getItem().getId());
+                DBWriter.updateLastPlayedId(feed);
+            }
             taskManager.startPositionSaver();
         }
 

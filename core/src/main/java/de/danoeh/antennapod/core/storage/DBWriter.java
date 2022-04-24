@@ -871,6 +871,19 @@ public class DBWriter {
     }
 
     /**
+     * Updates the last played item id
+     */
+    public static Future<?> updateLastPlayedId(final Feed feed) {
+        Log.d(TAG, "updateLastPlayedId(Feed id: " + feed.getId() + " new lastPlayedId: " + feed.getLastPlayedId() + ")");
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setFeedLastPlayedId(feed);
+            adapter.close();
+        });
+    }
+
+    /**
      * Saves a FeedPreferences object in the database. The Feed ID of the FeedPreferences-object MUST NOT be 0.
      *
      * @param preferences The FeedPreferences object.

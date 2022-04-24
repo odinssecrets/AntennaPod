@@ -50,7 +50,7 @@ public class PodDBAdapter {
 
     private static final String TAG = "PodDBAdapter";
     public static final String DATABASE_NAME = "Antennapod.db";
-    public static final int VERSION = 2060000;
+    public static final int VERSION = 2070000;
 
     /**
      * Maximum number of arguments for IN-operator.
@@ -76,6 +76,7 @@ public class PodDBAdapter {
     public static final String KEY_MEDIA = "media";
     public static final String KEY_DOWNLOADED = "downloaded";
     public static final String KEY_LASTUPDATE = "last_update";
+    public static final String KEY_LAST_PLAYED_ID = "last_played_id";
     public static final String KEY_FEEDFILE = "feedfile";
     public static final String KEY_REASON = "reason";
     public static final String KEY_SUCCESSFUL = "successful";
@@ -157,7 +158,8 @@ public class PodDBAdapter {
             + KEY_FEED_TAGS + " TEXT,"
             + KEY_FEED_SKIP_INTRO + " INTEGER DEFAULT 0,"
             + KEY_FEED_SKIP_ENDING + " INTEGER DEFAULT 0,"
-            + KEY_EPISODE_NOTIFICATION + " INTEGER DEFAULT 0)";
+            + KEY_EPISODE_NOTIFICATION + " INTEGER DEFAULT 0,"
+            + KEY_LAST_PLAYED_ID + " INTEGER DEFAULT -1)";
 
     private static final String CREATE_TABLE_FEED_ITEMS = "CREATE TABLE "
             + TABLE_NAME_FEED_ITEMS + " (" + TABLE_PRIMARY_KEY
@@ -263,7 +265,8 @@ public class PodDBAdapter {
             TABLE_NAME_FEEDS + "." + KEY_FEED_TAGS,
             TABLE_NAME_FEEDS + "." + KEY_FEED_SKIP_INTRO,
             TABLE_NAME_FEEDS + "." + KEY_FEED_SKIP_ENDING,
-            TABLE_NAME_FEEDS + "." + KEY_EPISODE_NOTIFICATION
+            TABLE_NAME_FEEDS + "." + KEY_EPISODE_NOTIFICATION,
+            TABLE_NAME_FEEDS + "." + KEY_LAST_PLAYED_ID
     };
 
     /**
@@ -428,6 +431,7 @@ public class PodDBAdapter {
         }
         values.put(KEY_SORT_ORDER, toCodeString(feed.getSortOrder()));
         values.put(KEY_LAST_UPDATE_FAILED, feed.hasLastUpdateFailed());
+        values.put(KEY_LAST_PLAYED_ID, feed.getLastPlayedId());
         if (feed.getId() == 0) {
             // Create new entry
             Log.d(this.toString(), "Inserting new Feed into db");
@@ -584,6 +588,15 @@ public class PodDBAdapter {
         ContentValues values = new ContentValues();
         values.put(KEY_DOWNLOAD_URL, updated);
         db.update(TABLE_NAME_FEEDS, values, KEY_DOWNLOAD_URL + "=?", new String[]{original});
+    }
+
+    /**
+     * Updates the last played item id of a Feed.
+     */
+    public void setFeedLastPlayedId(Feed feed) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_LAST_PLAYED_ID, feed.getLastPlayedId());
+        db.update(TABLE_NAME_FEEDS, values, KEY_ID + "=?", new String[]{String.valueOf(feed.getId())});
     }
 
     public void storeFeedItemlist(List<FeedItem> items) {

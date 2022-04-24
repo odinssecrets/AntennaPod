@@ -39,6 +39,7 @@ public abstract class FeedCursorMapper {
         int indexSortOrder = cursor.getColumnIndex(PodDBAdapter.KEY_SORT_ORDER);
         int indexLastUpdateFailed = cursor.getColumnIndex(PodDBAdapter.KEY_LAST_UPDATE_FAILED);
         int indexImageUrl = cursor.getColumnIndex(PodDBAdapter.KEY_IMAGE_URL);
+        int indexLastPlayedId = cursor.getColumnIndex(PodDBAdapter.KEY_LAST_PLAYED_ID);
 
         Feed feed = new Feed(
                 cursor.getLong(indexId),
@@ -60,7 +61,8 @@ public abstract class FeedCursorMapper {
                 cursor.getString(indexNextPageLink),
                 cursor.getString(indexHide),
                 SortOrder.fromCodeString(cursor.getString(indexSortOrder)),
-                cursor.getInt(indexLastUpdateFailed) > 0
+                cursor.getInt(indexLastUpdateFailed) > 0,
+                cursor.getLong(indexLastPlayedId)
         );
 
         FeedPreferences preferences = FeedPreferencesCursorMapper.convert(cursor);

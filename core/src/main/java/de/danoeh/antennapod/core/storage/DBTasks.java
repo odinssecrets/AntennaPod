@@ -420,6 +420,7 @@ public final class DBTasks {
             savedFeed.setLastUpdate(newFeed.getLastUpdate());
             savedFeed.setType(newFeed.getType());
             savedFeed.setLastUpdateFailed(false);
+            savedFeed.setLastPlayedId(newFeed.getLastPlayedId());
 
             resultFeed = savedFeed;
         }

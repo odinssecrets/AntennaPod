@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -495,6 +496,7 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         });
         viewBinding.header.butFilter.setOnClickListener(v ->
                 FeedItemFilterDialog.newInstance(feed).show(getChildFragmentManager(), null));
+        viewBinding.header.butJumpToLastPlayed.setOnClickListener(v -> jumpToLastPlayed());
         viewBinding.header.txtvFailure.setOnClickListener(v -> showErrorDetails());
         headerCreated = true;
     }
@@ -527,6 +529,33 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         if (feed != null) {
             FeedInfoFragment fragment = FeedInfoFragment.newInstance(feed);
             ((MainActivity) getActivity()).loadChildFragment(fragment, TransitionEffect.SLIDE);
+        }
+    }
+
+    private void jumpToLastPlayed() {
+        if (feed != null) {
+            long lastPlayedId = feed.getLastPlayedId();
+            if ( -1 != lastPlayedId ) {
+                RecyclerView episodeItemListRecyclerView = viewBinding.recyclerView;
+                for (int i = 0; i < adapter.getItemCount(); i++) {
+                    if (adapter.getItemId(i) == lastPlayedId) {
+                        LinearLayoutManager linearLayoutManager =
+                                (LinearLayoutManager) viewBinding.recyclerView.getLayoutManager();
+                        /**
+                         * This is used to center the item being jumped to. First it gets the number of
+                         * items visible on the screen in the recycle view. Then that is divided by two
+                         * to get an offset to the middle of the screen. That is added to the position
+                         * of the item that is being jumped to 'i'. The max check is to prevent going
+                         * beyond the bounds of the RecycleView.
+                         */
+                        int recycleViewVisibleItems = linearLayoutManager.findLastVisibleItemPosition() -
+                                linearLayoutManager.findFirstVisibleItemPosition();
+                        int newPosition = Math.min(i + recycleViewVisibleItems / 2, adapter.getItemCount());
+                        episodeItemListRecyclerView.smoothScrollToPosition(newPosition);
+                        break;
+                    }
+                }
+            }
         }
     }
 
