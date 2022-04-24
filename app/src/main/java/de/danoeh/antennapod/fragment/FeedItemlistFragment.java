@@ -541,17 +541,7 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
                     if (adapter.getItemId(i) == lastPlayedId) {
                         LinearLayoutManager linearLayoutManager =
                                 (LinearLayoutManager) viewBinding.recyclerView.getLayoutManager();
-                        /**
-                         * This is used to center the item being jumped to. First it gets the number of
-                         * items visible on the screen in the recycle view. Then that is divided by two
-                         * to get an offset to the middle of the screen. That is added to the position
-                         * of the item that is being jumped to 'i'. The max check is to prevent going
-                         * beyond the bounds of the RecycleView.
-                         */
-                        int recycleViewVisibleItems = linearLayoutManager.findLastVisibleItemPosition() -
-                                linearLayoutManager.findFirstVisibleItemPosition();
-                        int newPosition = Math.min(i + recycleViewVisibleItems / 2, adapter.getItemCount());
-                        episodeItemListRecyclerView.smoothScrollToPosition(newPosition);
+                        linearLayoutManager.scrollToPositionWithOffset(i, 0);
                         break;
                     }
                 }
