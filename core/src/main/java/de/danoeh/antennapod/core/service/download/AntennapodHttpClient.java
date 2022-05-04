@@ -3,9 +3,9 @@ package de.danoeh.antennapod.core.service.download;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.BasicAuthorizationInterceptor;
 import de.danoeh.antennapod.core.service.UserAgentInterceptor;
+import de.danoeh.antennapod.model.download.ProxyConfig;
 import de.danoeh.antennapod.net.ssl.SslClientSetup;
 import okhttp3.Cache;
 import okhttp3.Credentials;
@@ -28,6 +28,7 @@ public class AntennapodHttpClient {
     private static final int READ_TIMEOUT = 30000;
     private static final int MAX_CONNECTIONS = 8;
     private static File cacheDirectory;
+    private static ProxyConfig proxyConfig;
 
     private static volatile OkHttpClient httpClient = null;
 
@@ -81,14 +82,13 @@ public class AntennapodHttpClient {
         builder.followRedirects(true);
         builder.followSslRedirects(true);
 
-        ProxyConfig config = UserPreferences.getProxyConfig();
-        if (config.type != Proxy.Type.DIRECT && !TextUtils.isEmpty(config.host)) {
-            int port = config.port > 0 ? config.port : ProxyConfig.DEFAULT_PORT;
-            SocketAddress address = InetSocketAddress.createUnresolved(config.host, port);
-            builder.proxy(new Proxy(config.type, address));
-            if (!TextUtils.isEmpty(config.username) && config.password != null) {
+        if (proxyConfig != null && proxyConfig.type != Proxy.Type.DIRECT && !TextUtils.isEmpty(proxyConfig.host)) {
+            int port = proxyConfig.port > 0 ? proxyConfig.port : ProxyConfig.DEFAULT_PORT;
+            SocketAddress address = InetSocketAddress.createUnresolved(proxyConfig.host, port);
+            builder.proxy(new Proxy(proxyConfig.type, address));
+            if (!TextUtils.isEmpty(proxyConfig.username) && proxyConfig.password != null) {
                 builder.proxyAuthenticator((route, response) -> {
-                    String credentials = Credentials.basic(config.username, config.password);
+                    String credentials = Credentials.basic(proxyConfig.username, proxyConfig.password);
                     return response.request().newBuilder()
                             .header("Proxy-Authorization", credentials)
                             .build();
@@ -102,5 +102,9 @@ public class AntennapodHttpClient {
 
     public static void setCacheDirectory(File cacheDirectory) {
         AntennapodHttpClient.cacheDirectory = cacheDirectory;
+    }
+
+    public static void setProxyConfig(ProxyConfig proxyConfig) {
+        AntennapodHttpClient.proxyConfig = proxyConfig;
     }
 }

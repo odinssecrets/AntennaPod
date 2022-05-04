@@ -56,6 +56,7 @@ import de.danoeh.antennapod.fragment.AddFeedFragment;
 import de.danoeh.antennapod.fragment.AudioPlayerFragment;
 import de.danoeh.antennapod.fragment.DownloadsFragment;
 import de.danoeh.antennapod.fragment.EpisodesFragment;
+import de.danoeh.antennapod.fragment.InboxFragment;
 import de.danoeh.antennapod.fragment.FeedItemlistFragment;
 import de.danoeh.antennapod.fragment.NavDrawerFragment;
 import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
@@ -231,6 +232,7 @@ public class MainActivity extends CastEnabledActivity {
 
             // for backward compatibility, we only change defaults for fresh installs
             UserPreferences.setUpdateInterval(12);
+            AutoUpdateManager.restartUpdateAlarm(this);
 
             SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean(PREF_IS_FIRST_LAUNCH, false);
@@ -265,6 +267,9 @@ public class MainActivity extends CastEnabledActivity {
         switch (tag) {
             case QueueFragment.TAG:
                 fragment = new QueueFragment();
+                break;
+            case InboxFragment.TAG:
+                fragment = new InboxFragment();
                 break;
             case EpisodesFragment.TAG:
                 fragment = new EpisodesFragment();

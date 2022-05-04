@@ -11,8 +11,8 @@ android {
         // Version code schema:
         // "1.2.3-beta4"    -> 1020304
         // "1.2.3"          -> 1020395
-        versionCode 2050195
-        versionName "2.5.1"
+        versionCode 2050296
+        versionName "2.5.2"
 
         def commit = ""
         try {
@@ -25,14 +25,6 @@ android {
         } catch (Exception ignore) {
         }
         buildConfigField "String", "COMMIT_HASH", ('"' + (commit.isEmpty() ? "Unknown commit" : commit) + '"')
-
-        if (project.hasProperty("podcastindexApiKey")) {
-            buildConfigField "String", "PODCASTINDEX_API_KEY", '"' + podcastindexApiKey + '"'
-            buildConfigField "String", "PODCASTINDEX_API_SECRET", '"' + podcastindexApiSecret + '"'
-        } else {
-            buildConfigField "String", "PODCASTINDEX_API_KEY", '"XTMMQGA2YZ4WJUBYY4HK"'
-            buildConfigField "String", "PODCASTINDEX_API_SECRET", '"XAaAhk4^2YBsTE33vdbwbZNj82ZRLABDDqFdKe7x"'
-        }
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -113,6 +105,7 @@ dependencies {
     implementation project(":core")
     implementation project(":event")
     implementation project(':model')
+    implementation project(':net:discovery')
     implementation project(':net:sync:gpoddernet')
     implementation project(':net:sync:model')
     implementation project(':parser:feed')
@@ -157,7 +150,6 @@ dependencies {
     implementation 'com.github.shts:TriangleLabelView:1.1.2'
     implementation 'com.leinardi.android:speed-dial:3.2.0'
     implementation "com.github.AntennaPod:AntennaPod-AudioPlayer:$audioPlayerVersion"
-    implementation 'com.github.mfietz:fyydlin:v0.5.0'
     implementation 'com.github.ByteHamster:SearchPreference:v2.0.0'
     implementation 'com.github.skydoves:balloon:1.4.0'
     implementation 'com.github.xabaras:RecyclerViewSwipeDecorator:1.3'
